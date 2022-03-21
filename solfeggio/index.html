@@ -104,21 +104,21 @@
 		<h2  id="hint">請先選擇練習項目</h2>
 		<div class="block"  id="stageSelection">
 			<div>
-				<button class = "option" onclick="startTest(5,7)">1.ㄙ~ㄒ</button>
-				<button class = "option" onclick="startTest(5,9)">2.ㄙ~ㄖ'</button>
-				<button class = "option" onclick="startTest(5,11)">3.ㄙ~ㄈ'</button>
+				<button class = "option" onclick="startTest(5,7,this.innerHTML)">1.ㄙ~ㄒ</button>
+				<button class = "option" onclick="startTest(5,9,this.innerHTML)">2.ㄙ~ㄖ'</button>
+				<button class = "option" onclick="startTest(5,11,this.innerHTML)">3.ㄙ~ㄈ'</button>
 			</div>
 
 			<div>
-				<button class = "option" onclick="startTest(3,9)">4.ㄇ~ㄖ'</button>	
-				<button class = "option" onclick="startTest(3,11)">5.ㄇ~ㄈ'</button>
+				<button class = "option" onclick="startTest(3,9,this.innerHTML)">4.ㄇ~ㄖ'</button>	
+				<button class = "option" onclick="startTest(3,11,this.innerHTML)">5.ㄇ~ㄈ'</button>
 			</div>	
 
 			<div>			
-				<button class = "option" onclick="startTest(1,7)">6.ㄉ~ㄒ</button>
-				<button class = "option" onclick="startTest(1,9)">7.ㄉ~ㄖ'</button>
-				<button class = "option" onclick="startTest(1,11)">8.ㄉ~ㄈ'</button>
-				<button class = "option" onclick="startTest(1,14)">9.ㄉ~ㄒ'</button>
+				<button class = "option" onclick="startTest(1,7,this.innerHTML)">6.ㄉ~ㄒ</button>
+				<button class = "option" onclick="startTest(1,9,this.innerHTML)">7.ㄉ~ㄖ'</button>
+				<button class = "option" onclick="startTest(1,11,this.innerHTML)">8.ㄉ~ㄈ'</button>
+				<button class = "option" onclick="startTest(1,14,this.innerHTML)">9.ㄉ~ㄒ'</button>
 			</div>
 
 
@@ -153,9 +153,6 @@
 
 
 						<button class="b" onclick="answer(1)">ㄉ</button>
-
-
-
 						<button class="b" onclick="answer(2)">ㄖ</button>
 						<button class="b" onclick="answer(3)">ㄇ</button>
 						<button class="b" onclick="answer(4)">ㄈ</button>		
@@ -223,7 +220,7 @@
 				var ctx = c.getContext("2d");
 
 
-
+ 				var stageName=''
 
 				var allNotes = ['dummy','ㄉ','ㄖ','ㄇ','ㄈ','ㄙ','ㄌ','ㄒ','ㄉ\'','ㄖ\'','ㄇ\'','ㄈ\'','ㄙ\'','ㄌ\'','ㄒ\'']
 
@@ -258,7 +255,7 @@
 
 
 
-				function startTest(m,M){		
+				function startTest(m,M,name){		
 
 
 					$("#changeStage").show();
@@ -270,6 +267,8 @@
 					min = m
 					
 					max = M
+
+					stageName = name
 
 					totalQuestionNum = (max-min+1)
 					if(totalQuestionNum>12){
@@ -290,9 +289,10 @@
 					for(let i=min;i<=max;i++){
 						QAccumlateCount[i.toString()]=QCountOfEachNote
 					}
+					console.log(QAccumlateCount)
 					
 
-					$("#hint").html("關卡為"+allNotes[min]+"~"+allNotes[max])
+					$("#hint").html("關卡為"+ stageName)
 					;
 					questionIndex=0
 					score=0
@@ -521,7 +521,7 @@
 				, 250, 140);
 
 
-			ctx.font = "40px Arial";
+			ctx.font = "30px Arial";
 			ctx.fillStyle = "blue";	
 			ctx.textAlign = "center";
 			
@@ -530,7 +530,7 @@
 				, 250, 200)
 
 			ctx.fillText(
-				"答對率為"+((correctCount/totalQuestionNum)*100).toFixed(1)+"%,"+"被倒扣了" + (wrongCount*2*20/answeringSpeed.length).toFixed(0) + "分"
+				"答對率為"+((correctCount/totalQuestionNum)*100).toFixed(0)+"%,"+"被倒扣了" + (wrongCount*2*20/answeringSpeed.length).toFixed(0) + "分"
 				, 250, 250)
 
 			ctx.fillText(
