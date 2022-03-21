@@ -406,7 +406,7 @@
 		if(remainingTime<0){remainingTime=0}
 			answeringSpeed.push(remainingTime)
 
-		ctx.font = "30px Arial";
+		ctx.font = "45px Arial";
 		ctx.fillStyle = "green";
 		ctx.textAlign = "center";
 		//ctx.fillText("正確~", 230, 225-QNoteIndex*9.5);
@@ -422,7 +422,7 @@
 		wrongCount++
 		wrongRecord+= allNotes[QNoteIndex%7] + "按成" + allNotes[answeredNoteIndex] +"了"
 
-		ctx.font = "30px Arial";
+		ctx.font = "60px Arial";
 		ctx.fillStyle = "red";	
 		ctx.textAlign = "center";	
 		ctx.fillText("錯了! 這是"+allNotes[QNoteIndex], 230, 225-QNoteIndex*9.5);
