@@ -447,18 +447,29 @@
 
 
 		clear(function(){
-			ctx.font = "30px Arial";
+			ctx.font = "40px Arial";
 			ctx.fillStyle = "blue";	
 			ctx.textAlign = "center";
+
 			ctx.fillText(
 
-				"完成測驗,分數為"+score.toFixed(2)
+				"完成測驗,分數為"
 
-				, 250, 50);
-			ctx.fillText(
-				"測驗種類為"+allNotes[min]+"~"+allNotes[max]
+				, 250, 40);
 
-				, 250, 150)
+
+ctx.font = "80px Arial";
+			ctx.fillStyle = "purple";	
+			ctx.textAlign = "center";
+
+ctx.fillText(  score.toFixed(2).toString()
+				, 250, 140);
+
+
+ctx.font = "40px Arial";
+			ctx.fillStyle = "blue";	
+			ctx.textAlign = "center";
+			
 			ctx.fillText(
 				totalQuestionNum+"題中,答對"+(correctCount)+"題,答錯"+(wrongCount)+"題"
 				, 250, 200)
