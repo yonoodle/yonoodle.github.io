@@ -1,6 +1,4 @@
 <!-- alright reserved 2022 03 16 yonoodle -->
-<!-- special thanks to ciao lee for question generation algorithm suggestion -->
-
 
 <!DOCTYPE html>
 <html>
@@ -222,7 +220,7 @@
 				var ctx = c.getContext("2d");
 
 
-				var stageName=''
+ 				var stageName=''
 
 				var allNotes = ['dummy','ㄉ','ㄖ','ㄇ','ㄈ','ㄙ','ㄌ','ㄒ','ㄉ\'','ㄖ\'','ㄇ\'','ㄈ\'','ㄙ\'','ㄌ\'','ㄒ\'']
 
@@ -238,7 +236,7 @@
 				var min ,max
 
 				var questionIndex
-				var questionNotes=[]
+				var QAccumlateCount={}
 
 				var questionStartTime
 				var remainingTime
@@ -288,7 +286,10 @@
 
 
 					totalQuestionNum*=QCountOfEachNote
-					
+					for(let i=min;i<=max;i++){
+						QAccumlateCount[i.toString()]=QCountOfEachNote
+					}
+					console.log(QAccumlateCount)
 					
 
 					$("#hint").html("關卡為"+ stageName)
@@ -299,7 +300,6 @@
 					wrongCount=0
 
 
-					generateQuestions()
 
 					question()
 
@@ -312,61 +312,12 @@
 				var note_w = 66
 				var note_h = 42
 
-
-				function shuffle(array) {   //Fisher-Yates (aka Knuth) Shuffle.
-					let currentIndex = array.length,  randomIndex;
-					while (currentIndex != 0) {			    
-						randomIndex = Math.floor(Math.random() * currentIndex);
-						currentIndex--;
-						[array[currentIndex], array[randomIndex]] = [
-						array[randomIndex], array[currentIndex]];
-					}
-
-					return array;
-				}
-
-
-
-
-				function generateQuestions(){
-
-					let tempArray=[]
-					tempArray.length=0
-					questionNotes.length=0
-
-					for (var i = min; i <= max; i++) {
-						questionNotes.push(i)						
-					}		
-					shuffle(questionNotes)
-
-
-					for(var j = 0; j < QCountOfEachNote-1; j++){
-						
-						tempArray.length=0
-
-						for (var i = min; i <= max; i++) {						
-							tempArray.push(i)							
-						}		
-						shuffle(tempArray)
-
-						if(tempArray[0]==questionNotes[questionNotes.length-1]){
-							let swap
-							swap=tempArray[0]
-							tempArray[0]=tempArray[1]
-							tempArray[1]=swap
-						}
-						questionNotes = questionNotes.concat(tempArray)							
-					}
-					console.log(questionNotes)
-				}
-
-
 				function drawNote(QNoteIndex){
 
 					ctx.drawImage(G,0,0,500,350);	
 
 					function type(image){
-						setTimeout(function(){ctx.drawImage(image,200,h-QNoteIndex*15.8,66,42)},100)
+					setTimeout(function(){ctx.drawImage(image,200,h-QNoteIndex*15.8,66,42)},100)
 					}
 
 					if(QNoteIndex==1||QNoteIndex==13){
@@ -386,31 +337,31 @@
 
 						function question(){
 
-							
-							console.log("question Index = "+ questionIndex)
+							questionIndex++
+							console.log(questionIndex)
 
-							QNoteIndex=questionNotes[questionIndex]
-							console.log("QNoteIndex=" + QNoteIndex)
-
-
-							if(questionIndex<questionNotes.length)
+							if(questionIndex<=totalQuestionNum)
 							{						
 
-								clear(function(){									
+								clear(function(){
+
+									randomDifferentQ()	
 
 									drawNote(QNoteIndex)
 
 									questionStartTime = Date.now()
 									allowAnswering=true
-									questionIndex++
+
+
 
 								})
-							}	
-							else{	
 
-								finish()
 
-							}
+
+
+					//	console.log(correctCount)
+					//	console.log(wrongCount)
+
 
 
 /*
@@ -421,13 +372,64 @@
 				*/
 
 
+			}	
+			else{	
 
-
-
-
-
+				finish()
 
 			}
+
+
+
+
+
+		}
+
+		function randomDifferentQ(){				
+
+
+			QNoteIndex = Math.floor(Math.random() * (max - min + 1) ) + min;
+
+			var shouldDifferFromLast
+
+			if(totalQuestionNum-questionIndex>1){
+				shouldDifferFromLast=true
+				}
+			else{
+				shouldDifferFromLast=false
+				}
+
+			while((shouldDifferFromLast&&(QNoteIndex==lastQNoteIndex))||QAccumlateCount[QNoteIndex.toFixed(0).toString()]<1){
+//   (必須和之前不同 且 真的不同) 或是 該題已經出過太多次  才換題目
+				QNoteIndex = Math.floor(Math.random() * (max - min + 1) ) + min;
+
+				}
+
+
+				QAccumlateCount[QNoteIndex.toFixed(0).toString()]-=1
+				lastQNoteIndex=QNoteIndex
+				console.log(QAccumlateCount)	
+
+			}
+
+
+
+// use while instead of recursive code below , which cause stack overflow since the probability to hit the left few note is quite low
+
+			/*	
+
+				if(QNoteIndex==lastQNoteIndex||QAccumlateCount[QNoteIndex.toFixed(0).toString()]<1){
+					randomDifferentQ()
+				}
+				else{
+					QAccumlateCount[QNoteIndex.toFixed(0).toString()]-=1
+					lastQNoteIndex=QNoteIndex
+					console.log(QAccumlateCount)	
+				}
+				*/
+
+
+
 
 
 			function answer(ANoteIndex){
@@ -455,110 +457,108 @@
 
 				let timeEllapesed = Date.now()- questionStartTime
 
-						remainingTime = (5000 - timeEllapesed)/1000; // in second as score gained
-						if(remainingTime<0){remainingTime=0}
-							answeringSpeed.push(remainingTime)
+		remainingTime = (5000 - timeEllapesed)/1000; // in second as score gained
+		if(remainingTime<0){remainingTime=0}
+			answeringSpeed.push(remainingTime)
 
-						ctx.font = "45px Arial";
-						ctx.fillStyle = "green";
-						ctx.textAlign = "center";
-						//ctx.fillText("正確~", 230, 225-QNoteIndex*9.5);
-						ctx.fillText("正確~", 230, 225-QNoteIndex*9.5);		
-
-
-						setTimeout(question,500)
-
-					}
-
-					function wrong(){
-
-						wrongCount++
-						wrongRecord+= allNotes[QNoteIndex%7] + "按成" + allNotes[answeredNoteIndex] +"了"
-
-						ctx.font = "60px Arial";
-						ctx.fillStyle = "red";	
-						ctx.textAlign = "center";	
-						ctx.fillText("錯了! 這是"+allNotes[QNoteIndex], 230, 225-QNoteIndex*9.5);
-
-						setTimeout(question,3000)
-
-					}
-
-					function finish(){
-
-						score=0
-						avgAnsweringTime=0
-
-						for(let i = 0;i<answeringSpeed.length;i++){
-							score+=(answeringSpeed[i]+0.8)*20/answeringSpeed.length
-							avgAnsweringTime+=(5-answeringSpeed[i])
-						}
-
-						var punish = (wrongCount*0.5*(100/questionNotes.length) ).toFixed(0);
-
-						score-=punish
-
-						avgAnsweringTime/=answeringSpeed.length
+		ctx.font = "45px Arial";
+		ctx.fillStyle = "green";
+		ctx.textAlign = "center";
+		//ctx.fillText("正確~", 230, 225-QNoteIndex*9.5);
+		ctx.fillText("正確~", 230, 225-QNoteIndex*9.5);		
 
 
-						clear(function(){
-							ctx.font = "40px Arial";
-							ctx.fillStyle = "blue";	
-							ctx.textAlign = "center";
+		setTimeout(question,500)
 
-							ctx.fillText(
+	}
 
-								"完成測驗,分數為"
+	function wrong(){
 
-								, 250, 40);
+		wrongCount++
+		wrongRecord+= allNotes[QNoteIndex%7] + "按成" + allNotes[answeredNoteIndex] +"了"
 
+		ctx.font = "60px Arial";
+		ctx.fillStyle = "red";	
+		ctx.textAlign = "center";	
+		ctx.fillText("錯了! 這是"+allNotes[QNoteIndex], 230, 225-QNoteIndex*9.5);
 
-							ctx.font = "80px Arial";
-							ctx.fillStyle = "purple";	
-							ctx.textAlign = "center";
+		setTimeout(question,3000)
 
-							ctx.fillText(  score.toFixed(2).toString()
-								, 250, 140);
+	}
 
+	function finish(){
 
-							ctx.font = "30px Arial";
-							ctx.fillStyle = "blue";	
-							ctx.textAlign = "center";
+		score=0
+		avgAnsweringTime=0
 
-							ctx.fillText(
-								totalQuestionNum+"題中,答對"+(correctCount)+"題,答錯"+(wrongCount)+"題"
-								, 250, 200)
+		for(let i = 0;i<answeringSpeed.length;i++){
+			score+=(answeringSpeed[i]+0.8)*20/answeringSpeed.length
+			avgAnsweringTime+=(5-answeringSpeed[i])
+		}
 
-							ctx.fillText(
-								"答對率為"+((correctCount/totalQuestionNum)*100).toFixed(0)+"%,"+"被倒扣了" + punish + "分"
-								, 250, 250)
+		score-=wrongCount*2*20/answeringSpeed.length;
 
-							ctx.fillText(
-								"平均答題速度為"+ avgAnsweringTime.toFixed(2) + "秒"
-
-								, 250, 300)
+		avgAnsweringTime/=answeringSpeed.length
 
 
-						})
+		clear(function(){
+			ctx.font = "40px Arial";
+			ctx.fillStyle = "blue";	
+			ctx.textAlign = "center";
 
-						$("#further").show();
-						$("#answerButton").hide()
+			ctx.fillText(
 
+				"完成測驗,分數為"
 
-					}
-
-					function clear(callback){
-						ctx.clearRect(0, 0, 500 , 350);
-						callback()
-					}
+				, 250, 40);
 
 
-				</script>
+			ctx.font = "80px Arial";
+			ctx.fillStyle = "purple";	
+			ctx.textAlign = "center";
+
+			ctx.fillText(  score.toFixed(2).toString()
+				, 250, 140);
+
+
+			ctx.font = "30px Arial";
+			ctx.fillStyle = "blue";	
+			ctx.textAlign = "center";
+			
+			ctx.fillText(
+				totalQuestionNum+"題中,答對"+(correctCount)+"題,答錯"+(wrongCount)+"題"
+				, 250, 200)
+
+			ctx.fillText(
+				"答對率為"+((correctCount/totalQuestionNum)*100).toFixed(0)+"%,"+"被倒扣了" + (wrongCount*2*20/answeringSpeed.length).toFixed(0) + "分"
+				, 250, 250)
+
+			ctx.fillText(
+				"平均答題速度為"+ avgAnsweringTime.toFixed(2) + "秒"
+
+				, 250, 300)
+
+
+		})
+
+		$("#further").show();
+		$("#answerButton").hide()
+
+
+	}
+
+	function clear(callback){
+		ctx.clearRect(0, 0, 500 , 350);
+		callback()
+	}
+
+
+</script>
 
 
 
 
 
 
-			</body>
-			</html>
+</body>
+</html>
