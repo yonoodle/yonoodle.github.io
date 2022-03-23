@@ -103,7 +103,7 @@
 	<div class="block">
 
 		<h1 >唱名視譜練習 by 公碩老師</h1>	
-		<h2  id="hint">請先選擇練習項目</h2>
+		<h2  id="hint">請選擇關卡</h2>
 		<div class="block"  id="stageSelection">
 			<div>
 				<button class = "option" onclick="startTest(5,7,this.innerHTML)">1.ㄙ~ㄒ</button>
@@ -123,6 +123,10 @@
 				<button class = "option" onclick="startTest(1,14,this.innerHTML)">9.ㄉ~ㄒ'</button>
 			</div>
 
+			<h3>唱名對照表:<h3>
+
+			<img style="margin:0px;border: 0px;padding: 0px;" src="Gsolfeggio.png" height="250" width="500">				
+
 
 			<h3>遊戲方式說明:<h3>
 				<p>
@@ -141,7 +145,10 @@
 
 					</p>
 
-				</div>
+
+			</div>
+
+
 
 
 				<canvas class="block" id="myCanvas" width="500" height="350">
@@ -538,6 +545,19 @@
 								"平均答題速度為"+ avgAnsweringTime.toFixed(2) + "秒"
 
 								, 250, 300)
+
+							ctx.font = "20px Arial";
+							ctx.fillStyle = "black";	
+							ctx.textAlign = "center";
+							var t = new Date()
+							ctx.fillText(
+								"完成於"+t.getFullYear()+"年"
+								+t.getMonth()+"月"
+								+t.getDay()+"日"
+								+t.getHours()+"時"
+								+t.getMinutes()+"分"
+								+t.getSeconds()+"秒"
+								, 250, 345)
 
 
 						})
