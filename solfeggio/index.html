@@ -1,0 +1,75 @@
+<!-- alright reserved 2022 03 16 yonoodle -->
+<!-- special thanks to ciao lee for question generation algorithm suggestion -->
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+
+
+<style>
+	h1 {
+		text-align: center;
+	}
+
+	h2 {
+		font-size: 50px;
+		color: #5e32a8;
+		background: #fbffd6;
+		text-align: center;
+	}
+
+	p {
+		font-size: 16px;
+		text-align: left;
+		position: relative;
+		left: 100px;
+	}
+
+
+
+	.block {
+		margin: auto;
+		width: 500px;
+		text-align: center;
+	}
+
+	a {
+		font-size: 100px;
+		color: #000000;
+		background: #79ff90;
+		text-align: center;
+	}
+</style>
+
+
+
+
+<body>
+
+
+	<img hidden id="G" src="G.png" height="200px" width="200px">
+	<img hidden id="F" src="F.png" height="200px" width="200px">
+	<img hidden id="notehead" src="notehead.png" height="25" width="37">
+	<img hidden id="linedNotehead" src="linedNotehead.png" height="25" width="37">
+	<img hidden id="Si" src="Si.png" height="25" width="37">
+
+	<div class="block">
+
+		<h1>唱名視譜練習 by 公碩老師</h1>
+		<h2 id="hint">請選擇譜號</h2>
+		<div class="block" id="staff_selection">
+			<a href="./G.html">高音譜</a>
+			<br>
+			<a href="./F.html">低音譜</a>
+		</div>
+		
+	</div>
+
+
+</body>
+
+</html>

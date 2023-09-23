@@ -1,0 +1,594 @@
+<!-- alright reserved 2022 03 16 yonoodle -->
+<!-- special thanks to ciao lee for question generation algorithm suggestion -->
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+
+
+<style>
+	h1{
+		text-align: center;
+	}
+	h2{
+		font-size:  50px;
+		color:#5e32a8;
+		background:#fbffd6;
+		text-align: center;
+	}
+
+	p{
+		font-size: 16px;
+		text-align: left;
+		position: relative;
+		left:100px;
+	}
+
+
+	img{
+		border: 0;
+		margin:0;
+		border-radius: 0px 0px 5px 5px;
+	}
+
+	.b{
+
+		height: 160px;
+		padding-top:65px;
+		font-size: 50px;
+		background-color: white; 
+		color: black; 
+		border: 0;
+		border-left: 2px solid black;				
+		border-top: 2px solid black;		
+		border-bottom:  2px solid black;		
+		margin: 0px;
+		
+		box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 3px 3px 0 rgba(0,0,0,0.1);
+	}
+	.b:hover{
+		box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+	}
+
+	.option{
+
+		font-size: 30px;
+		background-color: #bbeeff; 
+		color: black; 
+		border: 2px;
+		border-radius : 5px;
+		margin: 3px;
+
+		box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 3px 3px 0 rgba(0,0,0,0.1);
+
+	}
+	.option:hover{
+		background-color: #aaffaa; 
+		box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+	}
+
+
+	.cde {
+
+		display:flex;
+		justify-content: center;   
+		
+	}
+
+
+	.block {    
+		margin: auto;
+		width: 500px;
+		text-align: center;
+	}
+
+</style>
+
+
+
+
+<body>
+
+
+	<img hidden id="G" src="G.png" height="200px" width="200px">
+	<img hidden id="F" src="F.png" height="200px" width="200px">
+	<img hidden id="notehead" src="notehead.png" height="25" width="37">
+	<img hidden id="linedNotehead" src="linedNotehead.png" height="25" width="37">
+	<img hidden id="doubleLinedNotehead" src="doubleLinedNotehead.png" height="25" width="37">
+	<img hidden id="Si" src="Si.png" height="25" width="37">
+
+	<div class="block">
+
+		<h1 >唱名視譜練習 by 公碩老師</h1>	
+		<h2  id="hint">請選擇關卡</h2>
+		<div class="block"  id="stageSelection">
+			<div>
+				<button class = "option" onclick="startTest(5,7,this.innerHTML)">1.ㄉ~ㄇ</button>  <!--高音指法in簡譜-->
+				<button class = "option" onclick="startTest(5,9,this.innerHTML)">2.ㄉ~ㄙ</button>
+				<button class = "option" onclick="startTest(5,11,this.innerHTML)">3.ㄉ~ㄙ</button>
+			</div>
+
+			<div>
+				<button class = "option" onclick="startTest(3,9,this.innerHTML)">4.'ㄌ~ㄇ</button>	
+				<button class = "option" onclick="startTest(3,11,this.innerHTML)">5.'ㄌ~ㄒ</button>
+			</div>	
+
+			<div>			
+				<button class = "option" onclick="startTest(1,7,this.innerHTML)">6.'ㄈ~ㄇ</button>
+				<button class = "option" onclick="startTest(1,9,this.innerHTML)">7.'ㄈ~ㄙ</button>
+				<button class = "option" onclick="startTest(1,11,this.innerHTML)">8.'ㄈ~ㄒ</button>
+				<button class = "option" onclick="startTest(1,14,this.innerHTML)">9.'ㄈ~ㄇ'</button>
+			</div>
+
+			<h3>唱名對照表:<h3>
+
+			<img style="margin:0px;border: 0px;padding: 0px;" src="Fsolfeggio.png" height="250" width="500">				
+
+
+			<h3>遊戲方式說明:<h3>
+				<p>
+					點擊相符的唱名按鈕字樣處即可回答題目。<br>
+					高音音域請點選低音之同唱名按鍵即為正確答案。<br>
+					(因為僅為唱名練習﹐避免過多按鈕不易點選)<br>
+
+				</p>
+
+				<h3>分數採計方式說明:<h3>
+					<p>
+						每次共約十五~二十五題<br>
+						答題速度越快﹐該題分數採計越高﹐<br>
+						雖然超過5秒後答題仍有基本分數﹐<br>
+						但題目答錯會有倒扣﹐請勿亂猜。<br>
+
+					</p>
+
+
+			</div>
+
+
+
+
+				<canvas class="block" id="myCanvas" width="500" height="350">
+
+				</canvas>
+
+
+
+				<div hidden class="block" style="position: ralative; " id= "answerButton">
+					<div class="block" style="font-size: 0; " >
+
+
+
+						<button class="b" onclick="answer(5)">ㄉ</button> <!-- 轉成高音指法的唱名來判斷-->
+						<button class="b" onclick="answer(6)">ㄖ</button>
+						<button class="b" onclick="answer(0)">ㄇ</button>
+						<button class="b" onclick="answer(1)">ㄈ</button>		
+						<button class="b" onclick="answer(2)">ㄙ</button>
+						<button class="b" onclick="answer(3)">ㄌ</button>
+						<button class="b" id="last" onclick="answer(4)">ㄒ</button>
+						<script type="text/javascript">
+							$("#last").css("border-right","2px solid black")
+						</script>
+
+						<div style="position: relative; left:-160px ; top:-160px" >
+
+							<img  style="position: relative; left:60px ; " src="blackKey.png" height="60" width="30">
+							<img  style="position: relative; left:90px ; " src="blackKey.png" height="60" width="30">
+
+							<img  style="position: relative; left:190px ; " src="blackKey.png" height="60" width="30">
+							<img  style="position: relative; left:225px ; " src="blackKey.png" height="60" width="30">
+							<img  style="position: relative; left:260px ; " src="blackKey.png" height="60" width="30">
+
+						</div>
+
+
+
+
+
+					</div>	
+				</div>
+
+				<div>
+					<button hidden class = "option" id="changeStage" onclick="changeStage()">選其他關</button>
+					<button hidden class = "option" id="tryAgain" onclick="startTest(min,max,stageName)">再試一次</button>
+				</div>
+
+
+			</div>
+
+
+			<script type="text/javascript">
+				function changeStage(){
+
+					$("#myCanvas").hide();
+					$("#answerButton").hide();
+
+					$("#changeStage").hide();
+					$("#tryAgain").hide();
+
+
+
+					$("#stageSelection").show();			
+
+
+
+
+					$("#hint").html("請選擇關卡");
+
+				}
+			</script>
+
+
+
+			<script type="text/javascript">
+
+
+				var c = document.getElementById("myCanvas");
+				var ctx = c.getContext("2d");
+
+
+				var stageName=''
+
+				var allNotes = ['dummy','\'ㄈ','\'ㄙ','\'ㄌ','\'ㄒ','ㄉ','ㄖ','ㄇ','ㄈ','ㄙ','ㄌ','ㄒ','ㄉ\'','ㄖ\'','ㄇ\'']
+
+				var totalQuestionNum
+				var QCountOfEachNote
+
+				var QNoteIndex 
+				var answeredNoteIndex
+
+				var lastQNoteIndex = 0
+
+
+				var min ,max
+
+				var questionIndex
+				var questionNotes=[]
+
+				var questionStartTime
+				var remainingTime
+
+				var allowAnswering=false
+
+
+				var correctCount=0
+				var wrongCount=0
+				var answeringSpeed=[]				
+				var avgAnsweringTime
+
+				var score
+
+				var wrongRecord=""
+
+
+
+				function startTest(m,M,name){		
+
+
+					$("#changeStage").show();
+					$("#stageSelection").hide();
+					$("#myCanvas").show();
+					$("#answerButton").show();
+					$("#tryAgain").show();
+
+					min = m
+					
+					max = M
+
+					stageName = name
+
+					totalQuestionNum = (max-min+1)
+					if(totalQuestionNum>12){
+						QCountOfEachNote=1
+					}
+					else if(totalQuestionNum>8){
+						QCountOfEachNote=2
+					}
+					else if(totalQuestionNum>4){
+						QCountOfEachNote=3
+					}	
+					else {
+						QCountOfEachNote=4
+					}			
+
+
+					totalQuestionNum*=QCountOfEachNote
+					
+					
+
+					$("#hint").html("關卡為"+ stageName)
+					;
+					questionIndex=0
+					score=0
+					correctCount=0
+					wrongCount=0
+
+
+					generateQuestions()
+
+					question()
+
+
+				}
+
+
+				var h = 260
+				var step = 15.8
+				var note_w = 66
+				var note_h = 42
+
+
+				function shuffle(array) {   //Fisher-Yates (aka Knuth) Shuffle.
+					let currentIndex = array.length,  randomIndex;
+					while (currentIndex != 0) {			    
+						randomIndex = Math.floor(Math.random() * currentIndex);
+						currentIndex--;
+						[array[currentIndex], array[randomIndex]] = [
+						array[randomIndex], array[currentIndex]];
+					}
+
+					return array;
+				}
+
+
+
+
+				function generateQuestions(){
+
+					let tempArray=[]
+					tempArray.length=0
+					questionNotes.length=0
+
+					for (var i = min; i <= max; i++) {
+						questionNotes.push(i)						
+					}		
+					shuffle(questionNotes)
+
+
+					for(var j = 0; j < QCountOfEachNote-1; j++){
+						
+						tempArray.length=0
+
+						for (var i = min; i <= max; i++) {						
+							tempArray.push(i)							
+						}		
+						shuffle(tempArray)
+
+						if(tempArray[0]==questionNotes[questionNotes.length-1]){
+							let swap
+							swap=tempArray[0]
+							tempArray[0]=tempArray[1]
+							tempArray[1]=swap
+						}
+						questionNotes = questionNotes.concat(tempArray)							
+					}
+					console.log(questionNotes)
+				}
+
+
+				function drawNote(QNoteIndex){
+
+					ctx.drawImage(F,0,0,500,350);	
+
+					function type(image){
+						setTimeout(function(){ctx.drawImage(image,200,h-(QNoteIndex+1)*15.8,66,42)},100)
+						//setTimeout(function(){ctx.drawImage(image,200,h,66,42)},100)
+					}
+					
+					if(QNoteIndex==12){
+						type(linedNotehead)
+					}	
+					else if(QNoteIndex==13){
+						type(Si)
+					}
+					else if(QNoteIndex==14){
+						//type(doubleLinedNotehead)
+						setTimeout(function(){ctx.drawImage(doubleLinedNotehead,200,h-(QNoteIndex+1)*15.8,66,53)},100)
+					}
+					else{
+						type(notehead)								
+					}
+
+				}
+
+
+
+						function question(){
+
+							
+							console.log("question Index = "+ questionIndex)
+
+							QNoteIndex=questionNotes[questionIndex]
+							console.log("QNoteIndex=" + QNoteIndex)
+
+
+							if(questionIndex<questionNotes.length)
+							{						
+
+								clear(function(){									
+
+									drawNote(QNoteIndex)
+
+									questionStartTime = Date.now()
+									allowAnswering=true
+									questionIndex++
+
+								})
+							}	
+							else{	
+
+								finish()
+
+							}
+
+
+/*
+				//test
+				for(let i=1;i<14;i+=2){
+					drawNote(i)
+				}
+				*/
+
+
+
+
+
+
+
+
+			}
+
+
+			function answer(ANoteIndex){
+
+				console.log("QNoteIndex="+QNoteIndex)
+				console.log("ANoteIndex="+ANoteIndex)
+				
+
+				if(allowAnswering==true){
+
+					answeredNoteIndex = ANoteIndex
+					allowAnswering=false
+
+
+					if(ANoteIndex==QNoteIndex%7){
+						correct()			
+
+					}		
+					else{
+						wrong()
+					}
+				}
+
+			}
+
+			function correct(){	
+
+				correctCount++
+
+				let timeEllapesed = Date.now()- questionStartTime
+
+						remainingTime = (5000 - timeEllapesed)/1000; // in second as score gained
+						if(remainingTime<0){remainingTime=0}
+							answeringSpeed.push(remainingTime)
+
+						ctx.font = "45px Arial";
+						ctx.fillStyle = "green";
+						ctx.textAlign = "center";
+						//ctx.fillText("正確~", 230, 225-QNoteIndex*9.5);
+						ctx.fillText("正確~", 230, 225-QNoteIndex*9.5);		
+
+
+						setTimeout(question,500)
+
+					}
+
+					function wrong(){
+
+						wrongCount++
+						wrongRecord+= allNotes[QNoteIndex%7] + "按成" + allNotes[answeredNoteIndex] +"了"
+
+						ctx.font = "60px Arial";
+						ctx.fillStyle = "red";	
+						ctx.textAlign = "center";	
+						ctx.fillText("錯了! 這是"+allNotes[QNoteIndex], 230, 225-QNoteIndex*9.5);
+
+						setTimeout(question,3000)
+
+					}
+
+					function finish(){
+
+						score=0
+						avgAnsweringTime=0
+
+						for(let i = 0;i<answeringSpeed.length;i++){
+							score+=(answeringSpeed[i]+0.8)*20/answeringSpeed.length
+							avgAnsweringTime+=(5-answeringSpeed[i])
+						}
+
+						var punish = (wrongCount*0.5*(100/questionNotes.length) ).toFixed(0);
+
+						score-=punish
+
+						avgAnsweringTime/=answeringSpeed.length
+
+
+						clear(function(){
+							ctx.font = "40px Arial";
+							ctx.fillStyle = "blue";	
+							ctx.textAlign = "center";
+
+							ctx.fillText(
+
+								"完成測驗,分數為"
+
+								, 250, 40);
+
+
+							ctx.font = "80px Arial";
+							ctx.fillStyle = "purple";	
+							ctx.textAlign = "center";
+
+							ctx.fillText(  score.toFixed(2).toString()
+								, 250, 140);
+
+
+							ctx.font = "30px Arial";
+							ctx.fillStyle = "blue";	
+							ctx.textAlign = "center";
+
+							ctx.fillText(
+								totalQuestionNum+"題中,答對"+(correctCount)+"題,答錯"+(wrongCount)+"題"
+								, 250, 200)
+
+							ctx.fillText(
+								"答對率為"+((correctCount/totalQuestionNum)*100).toFixed(0)+"%,"+"被倒扣了" + punish + "分"
+								, 250, 250)
+
+							ctx.fillText(
+								"平均答題速度為"+ avgAnsweringTime.toFixed(2) + "秒"
+
+								, 250, 300)
+
+							ctx.font = "20px Arial";
+							ctx.fillStyle = "black";	
+							ctx.textAlign = "center";
+							var t = new Date()
+							ctx.fillText(
+								"完成於"+t.getFullYear()+"年"
+								+t.getMonth()+"月"
+								+t.getDay()+"日"
+								+t.getHours()+"時"
+								+t.getMinutes()+"分"
+								+t.getSeconds()+"秒"
+								, 250, 345)
+
+
+						})
+
+						$("#further").show();
+						$("#answerButton").hide()
+
+
+					}
+
+					function clear(callback){
+						ctx.clearRect(0, 0, 500 , 350);
+						callback()
+					}
+
+
+				</script>
+
+
+
+
+
+
+			</body>
+			</html>
