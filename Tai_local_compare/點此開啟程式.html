@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio Player</title>
+  </head>
+  <body>
+    <div
+      id="dropArea"      
+      style="border: 2px dashed #ccc; padding: 20px; text-align: center"
+    >
+      <p>請將 目錄.txt 單獨拖曳至此</p>
+    </div>
+
+    <div
+    id="imageDiv"
+     >       
+    </div>
+    <div
+    id="audio_buttons"
+     >       
+    </div>
+    
+    <script>
+
+    var indications;
+    
+    var w = String(window.screen.width/10);
+    var h = String(window.screen.height/10);
+
+
+      document
+        .getElementById("dropArea")
+        .addEventListener("dragover", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.style.border = "2px dashed #333";
+        });
+
+      document
+        .getElementById("dropArea")
+        .addEventListener("dragleave", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.style.border = "2px dashed #ccc";
+        });
+
+      document
+        .getElementById("dropArea")
+        .addEventListener("drop", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.style.border = "2px dashed #ccc";
+
+          txtExt = ["txt"];
+          imageExt = ["jpg", "jpeg", "png"];
+          audioExt = ["mp3", "wav","m4a"];
+
+          
+
+          txtFileLoaded=false
+
+
+          // Handle dropped files
+          const files = e.dataTransfer.files;
+          
+          for (const file of files) {
+            console.log(indications)
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+              myFileExt = file.name.split(".").pop().trim().toLowerCase();
+              myFileName = file.name.split(".")[0].trim();
+
+              if(txtFileLoaded){
+                setTimeout(function(){
+                  $("#dropArea").hide();
+                  $(".audio").hide();
+                }
+                ,500)           
+              }
+
+              if (txtExt.includes(myFileExt)) {
+
+                reader.onload = function (e) {
+                    try {
+                        // Parse the JSON content into an object.
+                        indications = JSON.parse(e.target.result);
+                        console.log(indications)
+                        document.getElementById("dropArea").innerHTML= "<p>目錄讀取成功,請將含目錄的所有圖片和音檔一次拖曳至此</p>"
+                        reader.readAsText(file);
+                        // Display the object in a pre element.
+                        //const jsonOutput = document.getElementById('jsonOutput');
+                        //jsonOutput.textContent = JSON.stringify(indications, null, 2);
+                    } catch (error) {
+                        console.error('Error parsing JSON:', error);
+                    }
+                };
+
+                // Read the text file as text.
+                
+
+              } else if (imageExt.includes(myFileExt)) {
+                var img = document.createElement("img");
+              img.height=h
+              img.width=w
+              img.src = event.target.result;
+              img.id=myFileName;                            
+              document.getElementById("imageDiv").appendChild(img);              
+              document.getElementById(myFileName).addEventListener("click", function(){createButtons(this.id)});
+              reader.readAsDataURL(file);
+              
+
+              } else if (audioExt.includes(myFileExt)) {
+                const audio = new Audio();
+                audio.src = event.target.result;
+                audio.setAttribute("id",myFileName+"Audio")
+                audio.setAttribute("visibility","hidden")
+                audio.controls = true;
+                document.body.appendChild(audio);
+                reader.readAsDataURL(file);
+              }
+            };            
+
+            txtFileLoaded=true
+          }
+
+          
+
+        });
+
+
+function getObjArrayByCertainValue(objects,target){
+            var results = [];
+            var toSearch = target;          
+
+            for(var i=0; i<objects.length; i++) {   
+                var objs=objects[i].data             
+                for(var j=0; j<objs.length; j++) {                    
+                        if(objs[j].image.trim() == toSearch.trim()) {                    
+                        results.push([objects[i].audio,objs[j]]);
+                        }
+                }
+            }
+            console.log(results)
+            return results            
+        }
+
+            
+
+
+    function createButtons(myFileName){        
+        console.log("img_clicked")
+        console.log("myFileName="+myFileName)       
+        
+        const buttondiv=document.getElementById("audio_buttons")
+        buttondiv.innerHTML=""
+
+        
+        
+        // var results = indications.filter(obj => {
+        //         return obj.data.image == myFileName})            
+
+            var results = getObjArrayByCertainValue(indications,myFileName)
+
+            console.log(results)
+
+        for (const result of results)
+        {   newButton = document.createElement('button');
+            newButton.innerText=result[0];
+            
+            newButton.setAttribute("name",result[0])
+            newButton.setAttribute("id",result[0]+"_botton")
+            
+            newButton.setAttribute("startMinute",result[1].start.split("分")[0].trim())
+            newButton.setAttribute("startSecond",result[1].start.split("分").pop().replace(/秒/g,"").trim())
+            newButton.setAttribute("endMinute",result[1].end.split("分")[0].trim())
+            newButton.setAttribute("endSecond",result[1].end.split("分").pop().replace(/秒/g,"").trim())
+            
+            
+
+            newButton.addEventListener("click", 
+                        ()=>{playSpecificTime(event
+                                    // this.name,
+                                    // this.startMinute,
+                                    // this.startSecond,
+                                    // this.endMinute,
+                                    // this.endSecond
+                                    )});
+            console.log(newButton)
+            buttondiv.append(newButton)
+        }
+        
+    }
+
+
+      var donePlaying = true  //flag preventing multiple audio and inteval timer mess
+
+
+      function playSpecificTime(
+        e
+      ) {
+
+        if(donePlaying){
+          donePlaying=false
+
+          var obj=e.target
+
+          myFileName=obj.name
+          startMinutes=obj.getAttribute("startminute")
+          startSeconds=obj.getAttribute("startsecond")
+          endMinutes=obj.getAttribute("startminute")
+          endSeconds=obj.getAttribute("endsecond")
+
+          var audio = document.getElementById(myFileName+"Audio");
+
+          // Calculate the start and end times in seconds
+          var startTime = parseFloat(startMinutes * 60) + parseFloat(startSeconds);
+          var endTime = parseFloat(endMinutes * 60) + parseFloat(endSeconds);
+
+          console.log(startTime)
+          console.log(endTime)
+
+          // Set the current time of the audio to the start time
+          audio.currentTime = startTime;
+
+          // Play the audio
+          
+
+          // Pause the audio when the end time is reached , remove after it occured , otherwise it will block all other currentTime>endTime event
+    
+          audio.play();          
+
+          myInterval = setInterval(function (){
+
+            console.log(audio.currentTime)
+
+            if (audio.currentTime >= endTime+0.3){
+              audio.pause();
+              clearInterval(myInterval)
+              donePlaying=true
+            }
+          }         
+            , 10);         
+        }
+      }             
+
+      
+    </script>
+  </body>
+</html>
