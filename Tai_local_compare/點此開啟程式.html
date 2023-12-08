@@ -248,9 +248,12 @@ function getObjArrayByCertainValue(objects,target){
           // Calculate the start and end times in seconds
           var startTime = parseFloat(startMinutes * 60) + parseFloat(startSeconds);
           var endTime = parseFloat(endMinutes * 60) + parseFloat(endSeconds);
+          var audioTotalTime=audio.duration
 
-          console.log(startTime)
-          console.log(endTime)
+          console.log("start at" + startTime)
+          console.log("end at " + endTime)
+          console.log("audioTotalTime" + audioTotalTime)
+      
 
           // Set the current time of the audio to the start time
           audio.currentTime = startTime;
@@ -265,6 +268,13 @@ function getObjArrayByCertainValue(objects,target){
           myInterval = setInterval(function (){
 
             console.log(audio.currentTime)
+
+            if(endTime<=audioTotalTime){
+              audio.pause();
+              clearInterval(myInterval)
+              donePlaying=true
+              alert("結束時間超過音檔長度,請檢查目錄內容")
+            }
 
             if (audio.currentTime >= endTime+0.3){
               audio.pause();
