@@ -6,6 +6,12 @@
     <title>Audio Player</title>
   </head>
   <body>
+
+
+
+    <p style="text-align:center; font-size:20px">台語地方發音差別 1.0.0 版</p>
+
+
     <div
       id="dropArea"      
       style="border: 2px dashed #ccc; padding: 20px; text-align: center"
@@ -17,8 +23,18 @@
     id="imageDiv"
      >       
     </div>
+
     <div
-    id="audio_buttons"
+    id="all_audio"
+     >       
+    </div>
+
+    <p id="curSelect" style="text-align:center; font-size:14px"></p>
+
+    <div id="curImg" style="text-align:center;"></div>
+    
+    <div
+    id="audio_buttons" style="text-align:center;"
      >       
     </div>
     
@@ -28,6 +44,8 @@
     
     var w = String(window.screen.width/10);
     var h = String(window.screen.height/10);
+
+    var txtLoaded=false
 
 
       document
@@ -57,14 +75,17 @@
           imageExt = ["jpg", "jpeg", "png"];
           audioExt = ["mp3", "wav","m4a"];
 
-          
-
-          txtFileLoaded=false
-
+          if(txtLoaded){
+            setTimeout(function(){
+              document.getElementById("dropArea").style.display="none"
+              document.getElementById("all_audio").style.display="none"
+              
+            },500)
+          }
 
           // Handle dropped files
           const files = e.dataTransfer.files;
-          
+
           for (const file of files) {
             console.log(indications)
             const reader = new FileReader();
@@ -73,33 +94,22 @@
               myFileExt = file.name.split(".").pop().trim().toLowerCase();
               myFileName = file.name.split(".")[0].trim();
 
-              if(txtFileLoaded){
-                setTimeout(function(){
-                  $("#dropArea").hide();
-                  $(".audio").hide();
-                }
-                ,500)           
-              }
-
               if (txtExt.includes(myFileExt)) {
 
                 reader.onload = function (e) {
                     try {
                         // Parse the JSON content into an object.
-                        indications = JSON.parse(e.target.result);
-                        console.log(indications)
+                        indications = JSON.parse(e.target.result);                        
                         document.getElementById("dropArea").innerHTML= "<p>目錄讀取成功,請將含目錄的所有圖片和音檔一次拖曳至此</p>"
-                        reader.readAsText(file);
-                        // Display the object in a pre element.
-                        //const jsonOutput = document.getElementById('jsonOutput');
-                        //jsonOutput.textContent = JSON.stringify(indications, null, 2);
+                        txtLoaded=true
+
                     } catch (error) {
                         console.error('Error parsing JSON:', error);
                     }
                 };
 
                 // Read the text file as text.
-                
+                reader.readAsText(file);
 
               } else if (imageExt.includes(myFileExt)) {
                 var img = document.createElement("img");
@@ -108,8 +118,7 @@
               img.src = event.target.result;
               img.id=myFileName;                            
               document.getElementById("imageDiv").appendChild(img);              
-              document.getElementById(myFileName).addEventListener("click", function(){createButtons(this.id)});
-              reader.readAsDataURL(file);
+              document.getElementById(myFileName).addEventListener("click", function(){createButtons(this, this.id)});
               
 
               } else if (audioExt.includes(myFileExt)) {
@@ -118,16 +127,13 @@
                 audio.setAttribute("id",myFileName+"Audio")
                 audio.setAttribute("visibility","hidden")
                 audio.controls = true;
-                document.body.appendChild(audio);
-                reader.readAsDataURL(file);
+                document.getElementById("all_audio").appendChild(audio);
               }
-            };            
+            };
 
-            txtFileLoaded=true
+            reader.readAsDataURL(file);
           }
-
           
-
         });
 
 
@@ -150,17 +156,18 @@ function getObjArrayByCertainValue(objects,target){
             
 
 
-    function createButtons(myFileName){        
+    function createButtons(selectedImg,myFileName){        
         console.log("img_clicked")
         console.log("myFileName="+myFileName)       
-        
-        const buttondiv=document.getElementById("audio_buttons")
-        buttondiv.innerHTML=""
 
+        document.getElementById("curSelect").innerText="當前選項"
         
+        document.getElementById("curImg").innerHTML=""
+        document.getElementById("curImg").append(selectedImg.cloneNode(true))
+
+        const buttondiv=document.getElementById("audio_buttons")
+        buttondiv.innerHTML=""        
         
-        // var results = indications.filter(obj => {
-        //         return obj.data.image == myFileName})            
 
             var results = getObjArrayByCertainValue(indications,myFileName)
 
@@ -248,5 +255,8 @@ function getObjArrayByCertainValue(objects,target){
 
       
     </script>
+
+
+<p style="text-align:right; font-size:12px">author 公碩</p>
   </body>
 </html>
