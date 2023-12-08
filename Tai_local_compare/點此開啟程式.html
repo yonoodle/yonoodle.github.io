@@ -252,7 +252,7 @@ function getObjArrayByCertainValue(objects,target){
 
           console.log("start at" + startTime)
           console.log("end at " + endTime)
-          console.log("audioTotalTime" + audioTotalTime)
+          console.log("audioTotalTime " + audioTotalTime)
       
 
           // Set the current time of the audio to the start time
@@ -269,11 +269,11 @@ function getObjArrayByCertainValue(objects,target){
 
             console.log(audio.currentTime)
 
-            if(endTime<=audioTotalTime){
+            if(startTime>=audioTotalTime||endTime>=audioTotalTime){
               audio.pause();
               clearInterval(myInterval)
               donePlaying=true
-              alert("結束時間超過音檔長度,請檢查目錄內容")
+              alert("設定之開始或結束時間超過音檔長度,請檢查目錄內容")
             }
 
             if (audio.currentTime >= endTime+0.3){
